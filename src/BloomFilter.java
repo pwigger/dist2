@@ -1,7 +1,11 @@
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 /**
  * Created by pwg on 06.06.17.
@@ -11,31 +15,72 @@ public class BloomFilter {
   private int k;
   private HashFunction[] hashFunctions;
   private int[] arr;
+  private ArrayList<String> data = new ArrayList<>();
 
 
-  public BloomFilter(int m, int k) {
+  public BloomFilter(int m, int k) throws Throwable {
     this.m = m;
     this.k = k;
-
     hashFunctions = new HashFunction[k];
     for (int i = 0; i < hashFunctions.length; i++) {
-      hashFunctions[i] = Hashing.murmur3_128((int) Math.random() * 100000);
+      hashFunctions[i] = Hashing.murmur3_128((int) System.currentTimeMillis());
     }
     this.arr = new int[m];
   }
 
-  public void readWords() throws IOException {
+  public int readData(String dataSet) throws IOException {
 
+    try (InputStream input = getClass().getResourceAsStream(dataSet)) {
 
+      BufferedReader br = new BufferedReader(new InputStreamReader(input));
 
-    try(InputStream input =  getClass().getResourceAsStream("words.txt")) {
-
-      int data = input.read();
-      while(data != -1){
-        System.out.print((char) data);
-        data = input.read();
+      String inputData;
+      while ((inputData = br.readLine()) != null) {
+        bloomAdd(inputData);
+        data.add(inputData);
       }
     }
+    System.out.println("added " + data.size() + " Entries to ArrayList");
+    System.out.println("----------------------------------------------");
+    return data.size();
+  }
+
+
+  public boolean bloomContains(String str) {
+    int count = 0;
+    for (int i = 0; i < hashFunctions.length; i++) {
+      int index = Math.abs(hashFunctions[i].hashString(str, Charset.defaultCharset()).asInt()) % m;
+      if (arr[index] == 1) {
+        count++;
+      }
+
+
+    }
+    // System.out.println("This dataset probably " + (count == k ? "contains" : "does not contain") + " the word " + "\"" + str + "\"");
+    if (count == k) {
+      System.out.println("This dataset probably contains the word " + "\"" + str + "\"");
+    }
+    return count == k;
+  }
+
+  public void printArr() {
+    int sum = 0;
+    for (int i = 0; i < arr.length; i++) {
+      sum += this.arr[i];
+    }
+    System.out.println(((double) sum) / ((double) arr.length) + "% of the array is filled");
+  }
+
+
+  public void bloomAdd(String str) {
+    for (int i = 0; i < hashFunctions.length; i++) {
+      int index = Math.abs(hashFunctions[i].hashString(str, Charset.defaultCharset()).asInt()) % m;
+      arr[index] = 1;
+    }
+  }
+
+  public boolean contains(String str) {
+    return this.data.contains(str);
   }
 
 
