@@ -4,10 +4,11 @@
 
 public class Main {
 
-  static final double AIMEDPROBABILITY = 0.01;
-  static final int MINWORDSIZE = 3;
+  static final double AIMEDPROBABILITY = 0.005;
+  static final int MINWORDSIZE = 4;
+  static final int MAXWORDSIZE = 8;
   static final int SAMPLESIZE = 1000;
-  static final int EXPECTEDSIZE = 60000;
+  static final int EXPECTEDSIZE = 58110;
 
   public static void main(String[] args) throws Throwable {
     System.out.println("Dist Bonusaufgabe");
@@ -67,7 +68,7 @@ public class Main {
   Creates random words
    */
   public static String wordGenerator() {
-    char[] word = new char[(int) (Math.random() * 7) + MINWORDSIZE];
+    char[] word = new char[(int) (Math.random() * MAXWORDSIZE) + MINWORDSIZE];
     for (int i = 0; i < word.length; i++) {
       word[i] = (char) (97 + (int) (Math.random() * 26));
     }

@@ -30,7 +30,7 @@ public class BloomFilter {
 
       hashFunctions[i] = Hashing.murmur3_128((int) (System.currentTimeMillis()));
       String teststring = "Dist2017FHNW";
-      System.out.println("Testing Hashfunction " + i + " with" + teststring + hashFunctions[i].hashString(teststring,Charset.defaultCharset()));
+      System.out.println("Testing Hashfunction " + (i+1) + " with: \"" + teststring +"\": "+ hashFunctions[i].hashString(teststring,Charset.defaultCharset()));
           Thread.sleep((int) (Math.random() * 100));
     }
     System.out.println();
