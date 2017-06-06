@@ -25,13 +25,15 @@ public class BloomFilter {
     this.m = m;
     this.k = k;
     hashFunctions = new HashFunction[k];
+    System.out.println();
     for (int i = 0; i < k; i++) {
 
       hashFunctions[i] = Hashing.murmur3_128((int) (System.currentTimeMillis()));
-     // System.out.println(hashFunctions[i].hashString("hallo123",Charset.defaultCharset()));
-    Thread.sleep((int)(Math.random()*100));
+      String teststring = "Dist2017FHNW";
+      System.out.println("Testing Hashfunction " + i + " with" + teststring + hashFunctions[i].hashString(teststring,Charset.defaultCharset()));
+          Thread.sleep((int) (Math.random() * 100));
     }
-
+    System.out.println();
     this.arr = new int[m];
   }
 
@@ -51,7 +53,9 @@ public class BloomFilter {
         data.add(inputData);
       }
     }
-    System.out.println("added " + data.size() + " Entries to ArrayList");
+    System.out.println("----------------------------------------------");
+
+    System.out.println("added " + data.size() + " Entries to dataSet");
     System.out.println("----------------------------------------------");
     return data.size();
   }
@@ -69,7 +73,6 @@ public class BloomFilter {
       }
     }
     // System.out.println("This dataset probably " + (count == k ? "contains" : "does not contain") + " the word " + "\"" + str + "\"");
-    System.out.println("This dataset probably contains the word " + "\"" + str + "\"");
     return true;
   }
 
@@ -100,7 +103,7 @@ public class BloomFilter {
   public void bloomAdd(String str) {
     for (int i = 0; i < hashFunctions.length; i++) {
       int index = calculateIndex(str, hashFunctions[i]);
-     // System.out.println("added fingerprint for word: " + str + " at index:" + index);
+      // System.out.println("added fingerprint for word: " + str + " at index:" + index);
       arr[index] = 1;
     }
   }

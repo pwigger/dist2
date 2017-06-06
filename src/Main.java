@@ -11,25 +11,37 @@ public class Main {
 
   public static void main(String[] args) throws Throwable {
     System.out.println("Dist Bonusaufgabe");
-
+    System.out.println();
 
     BloomFilter bf = createOptimalBloomFilter(EXPECTEDSIZE, AIMEDPROBABILITY);
     bf.readData("words.txt");
 
     int count = 0;
+    System.out.println("Generating "+SAMPLESIZE+" Words");
+    System.out.println("----------------------------------------------");
+
 
     for (int i = 0; i < SAMPLESIZE; i++) {
       String generatedWord = wordGenerator();
       if (bf.bloomContains(generatedWord)) {
         if (!bf.contains(generatedWord)) {
+          System.out.println("WRONG MATCH: This dataset probably contains the word " + "\"" + generatedWord + "\"");
           count++;
+        }
+        else{
+          System.out.println("TRUE MATCH: This dataset probably contains the word " + "\"" + generatedWord + "\"");
         }
       }
     }
     System.out.println("----------------------------------------------");
     bf.printArr();
-    System.out.println("got " + ((double) count / (double) SAMPLESIZE) + " wrong matches. Aimed value was: " + AIMEDPROBABILITY
-    );
+
+    double actualValue=(double) count / (double) SAMPLESIZE;
+    System.out.println("got " + count+"/"+SAMPLESIZE+" = " +actualValue+ " wrong matches.");
+    System.out.println("Aimed value was: " + AIMEDPROBABILITY);
+    System.out.println("Difference: " + Math.abs(AIMEDPROBABILITY-actualValue));
+    System.out.println("----------------------------------------------");
+
   }
 
 
@@ -41,10 +53,12 @@ public class Main {
     double dk = dm / n * Math.log(2);
     int m = (int) (dm + 1);
     int k = (int) (dk + 1);
+    System.out.println("----------------------------------------------");
 
     System.out.println("Probablity: " + p + ", Elements: " + n);
     System.out.println("Filtersize:" + m);
     System.out.println("Hash Functions:" + k);
+    System.out.println("----------------------------------------------");
 
     return new BloomFilter(m, k);
   }
