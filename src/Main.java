@@ -4,7 +4,6 @@
 
 public class Main {
 
-
   static final double AIMEDPROBABILITY = 0.01;
   static final int MINWORDSIZE = 3;
   static final int SAMPLESIZE = 1000;
@@ -29,7 +28,7 @@ public class Main {
     }
     System.out.println("----------------------------------------------");
     bf.printArr();
-    System.out.println("got " + (double) count / (double) SAMPLESIZE + " wrong matches. Aimed value was: " + AIMEDPROBABILITY
+    System.out.println("got " + ((double) count / (double) SAMPLESIZE) + " wrong matches. Aimed value was: " + AIMEDPROBABILITY
     );
   }
 

@@ -26,8 +26,12 @@ public class BloomFilter {
     this.k = k;
     hashFunctions = new HashFunction[k];
     for (int i = 0; i < k; i++) {
-      hashFunctions[i] = Hashing.murmur3_128((int) System.currentTimeMillis());
+
+      hashFunctions[i] = Hashing.murmur3_128((int) (System.currentTimeMillis()));
+     // System.out.println(hashFunctions[i].hashString("hallo123",Charset.defaultCharset()));
+    Thread.sleep((int)(Math.random()*100));
     }
+
     this.arr = new int[m];
   }
 
@@ -59,7 +63,7 @@ public class BloomFilter {
   public boolean bloomContains(String str) {
     int count = 0;
     for (int i = 0; i < hashFunctions.length; i++) {
-      int index=calculateIndex(str, hashFunctions[i]);
+      int index = calculateIndex(str, hashFunctions[i]);
       if (arr[index] == 0) {
         return false;
       }
@@ -73,7 +77,8 @@ public class BloomFilter {
   calculates the index of a word with the
    */
   private int calculateIndex(String str, HashFunction hashf) {
-    return Math.abs(hashf.hashString(str,Charset.defaultCharset()).asInt())%m;
+    return Math.abs(hashf.hashString(str, Charset.defaultCharset()).asInt()) % m;
+
 
   }
 
@@ -95,6 +100,7 @@ public class BloomFilter {
   public void bloomAdd(String str) {
     for (int i = 0; i < hashFunctions.length; i++) {
       int index = calculateIndex(str, hashFunctions[i]);
+     // System.out.println("added fingerprint for word: " + str + " at index:" + index);
       arr[index] = 1;
     }
   }
