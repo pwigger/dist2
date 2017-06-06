@@ -18,15 +18,22 @@ public class BloomFilter {
   private ArrayList<String> data = new ArrayList<>();
 
 
+  /*
+  creates a new Bloomfilter with m-Bits as guard array and k Hashfunctions
+   */
   public BloomFilter(int m, int k) throws Throwable {
     this.m = m;
     this.k = k;
     hashFunctions = new HashFunction[k];
-    for (int i = 0; i < hashFunctions.length; i++) {
+    for (int i = 0; i < k; i++) {
       hashFunctions[i] = Hashing.murmur3_128((int) System.currentTimeMillis());
     }
     this.arr = new int[m];
   }
+
+  /*
+  reads in the data from the file with the given name.
+   */
 
   public int readData(String dataSet) throws IOException {
 
@@ -45,43 +52,57 @@ public class BloomFilter {
     return data.size();
   }
 
+  /*
+  Does the filtering: Checks if the Fingerprint of the word matches the guardArray
+   */
 
   public boolean bloomContains(String str) {
     int count = 0;
     for (int i = 0; i < hashFunctions.length; i++) {
-      int index = Math.abs(hashFunctions[i].hashString(str, Charset.defaultCharset()).asInt()) % m;
-      if (arr[index] == 1) {
-        count++;
+      int index=calculateIndex(str, hashFunctions[i]);
+      if (arr[index] == 0) {
+        return false;
       }
-
-
     }
     // System.out.println("This dataset probably " + (count == k ? "contains" : "does not contain") + " the word " + "\"" + str + "\"");
-    if (count == k) {
-      System.out.println("This dataset probably contains the word " + "\"" + str + "\"");
-    }
-    return count == k;
+    System.out.println("This dataset probably contains the word " + "\"" + str + "\"");
+    return true;
   }
 
+  /*
+  calculates the index of a word with the
+   */
+  private int calculateIndex(String str, HashFunction hashf) {
+    return Math.abs(hashf.hashString(str,Charset.defaultCharset()).asInt())%m;
+
+  }
+
+  /*
+  counts how many ones are contained in the Guard-Array
+   */
   public void printArr() {
     int sum = 0;
     for (int i = 0; i < arr.length; i++) {
       sum += this.arr[i];
     }
-    System.out.println(((double) sum) / ((double) arr.length) + "% of the array is filled");
+    System.out.println(sum + "/" + arr.length + " of the array are filled with \"1\"");
   }
 
+  /*
+  Adds the fingerprint of str in the Guard-Array
+   */
 
   public void bloomAdd(String str) {
     for (int i = 0; i < hashFunctions.length; i++) {
-      int index = Math.abs(hashFunctions[i].hashString(str, Charset.defaultCharset()).asInt()) % m;
+      int index = calculateIndex(str, hashFunctions[i]);
       arr[index] = 1;
     }
   }
 
+  /*
+  Checks if a string is really in the dataset
+   */
   public boolean contains(String str) {
     return this.data.contains(str);
   }
-
-
 }

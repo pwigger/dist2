@@ -5,15 +5,16 @@
 public class Main {
 
 
-  static final double p = 0.001;
-  static final int MINWORDSIZE = 5;
+  static final double AIMEDPROBABILITY = 0.01;
+  static final int MINWORDSIZE = 3;
   static final int SAMPLESIZE = 1000;
+  static final int EXPECTEDSIZE = 60000;
 
   public static void main(String[] args) throws Throwable {
     System.out.println("Dist Bonusaufgabe");
 
 
-    BloomFilter bf = computeOptimalBloomFilter(58110, p);
+    BloomFilter bf = createOptimalBloomFilter(EXPECTEDSIZE, AIMEDPROBABILITY);
     bf.readData("words.txt");
 
     int count = 0;
@@ -28,32 +29,30 @@ public class Main {
     }
     System.out.println("----------------------------------------------");
     bf.printArr();
-    System.out.println("got " + (double) count / (double) SAMPLESIZE + " wrong matches. Aimed value was: " + p
+    System.out.println("got " + (double) count / (double) SAMPLESIZE + " wrong matches. Aimed value was: " + AIMEDPROBABILITY
     );
   }
 
 
   /*
-  1. For a given number n of elements that are expected to be
-  stored in the data structure and for a given error probability p,
-  compute a suitable size for the filter and the optimal number k of
-  hash functions.
+  creates a Bloomfilter with n = num expected Elements, p = expected Probability for false matches
    */
-  public static BloomFilter computeOptimalBloomFilter(int n, double p) throws Throwable {
+  public static BloomFilter createOptimalBloomFilter(int n, double p) throws Throwable {
     double dm = -n * Math.log(p) / (Math.pow(Math.log(2), 2));
     double dk = dm / n * Math.log(2);
     int m = (int) (dm + 1);
     int k = (int) (dk + 1);
 
-
     System.out.println("Probablity: " + p + ", Elements: " + n);
-
     System.out.println("Filtersize:" + m);
     System.out.println("Hash Functions:" + k);
 
     return new BloomFilter(m, k);
   }
 
+  /*
+  Creates random words
+   */
   public static String wordGenerator() {
     char[] word = new char[(int) (Math.random() * 7) + MINWORDSIZE];
     for (int i = 0; i < word.length; i++) {
